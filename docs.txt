@@ -1,0 +1,210 @@
+local m_thread = task do
+    setreadonly(m_thread, false)
+
+    function m_thread.spawn_loop(p_time, p_callback)
+        m_thread.spawn(function()
+            while true do
+                p_callback()
+                m_thread.wait(p_time)
+            end
+        end)
+    end
+
+    setreadonly(m_thread, true)
+end
+
+local library, pointers = loadfile("dedeui.lua.lua")() do
+
+    local titlename = "no.regrets"
+
+    local window = library:New({name = titlename, size = Vector2.new(550, 610), Accent = Color3.fromRGB(100,61,200)})
+
+    local combat_page = window:Page({name = "Combat", size = 104}) do
+    end
+    local esp_page = window:Page({name = "Visuals", size = 103}) do
+    end
+
+    local misc_page = window:Page({name = "Misc", size = 103}) do
+    end
+
+    local settings_page = window:Page({name = "Settings", side = "Left", size = 104}) do
+
+        local config_section = settings_page:Section({name = "Configuration", side = "Left"}) do
+            local current_list = {}
+            local function update_config_list()
+                local list = {}
+                for idx, file in ipairs(listfiles("r3zkoclient/configs")) do
+                    local file_name = file:gsub("r3zkoclient/configs\\", ""):gsub(".txt", "")
+                    list[#list + 1] = file_name
+                end
+
+                local is_new = #list ~= #current_list
+                if not is_new then
+                    for idx, file in ipairs(list) do
+                        if file ~= current_list[idx] then
+                            is_new = true
+                            break
+                        end
+                    end
+                end
+
+                if is_new then
+                    current_list = list
+                    pointers["settings/configuration/list"]:UpdateList(list, false, true)
+                end
+            end
+
+
+
+
+            config_section:Listbox(
+                {pointer = "settings/configuration/list"})
+            config_section:Textbox(
+                {pointer = "settings/configuration/name", placeholder = "Config Name", text = "", middle = true, reset_on_focus = false})
+            config_section:Button(
+                {name = "Create", confirmation = true, callback = function()
+                    local config_name = pointers["settings/configuration/name"]:get()
+                    if config_name == "" or isfile("r3zkoclient/configs/" .. config_name .. ".txt") then
+                        return
+                    end
+    
+                    writefile("r3zkoclient/configs/" .. config_name .. ".txt", "")
+                    update_config_list()
+
+                end})
+            config_section:Button(
+                {name = "Load", confirmation = true, callback = function()
+                    local selected_config = pointers["settings/configuration/list"]:get()[1][1]
+                    if selected_config then
+                        window:LoadConfig(readfile("r3zkoclient/configs/" .. selected_config .. ".txt"))
+                    end
+                end})
+            config_section:Button(
+                {name = "Save", confirmation = true, callback = function()
+                    local selected_config = pointers["settings/configuration/list"]:get()[1][1]
+                    if selected_config then
+                        writefile("r3zkoclient/configs/" .. selected_config .. ".txt", window:GetConfig())
+                    end
+                end})
+            config_section:Button(
+                {name = "Delete", confirmation = true, callback = function()
+                    local selected_config = pointers["settings/configuration/list"]:get()[1][1]
+                    if selected_config then
+                        delfile("r3zkoclient/configs/" .. selected_config .. ".txt")
+                        update_config_list()
+                    end
+                end})
+
+            m_thread.spawn_loop(3, update_config_list)
+        end
+
+        local menu_section = settings_page:Section({name = "Menu"}) do
+            --
+            local function gs(a)
+                return game:GetService(a)
+            end
+            --
+            local actionservice = gs('ContextActionService')
+            --
+            menu_section:Keybind(
+                {pointer = "settings/menu/bind", name = "Bind", default = Enum.KeyCode.Home, callback = function(p_state)
+                    window.uibind = p_state
+                end})
+            menu_section:Toggle(
+                {pointer = "settings/menu/watermark", name = "Watermark", callback = function(p_state)
+                    window.watermark:Update("Visible", p_state)
+                end})
+            menu_section:Toggle(
+                {pointer = "settings/menu/keybind_list", name = "Keybind List", callback = function(p_state)
+                    window.keybindslist:Update("Visible", p_state)
+                end})
+            menu_section:Toggle(
+                {
+                    pointer = "freezemovement", name = "Disable Movement if UI Open", callback = function(bool)
+                        if bool and window.isVisible then
+                            actionservice:BindAction(
+                                'FreezeMovement',
+                                function()
+                                    return Enum.ContextActionResult.Sink
+                                end,
+                                false,
+                                unpack(Enum.PlayerActions:GetEnumItems())
+                            )
+                        else
+                            actionservice:UnbindAction('FreezeMovement');
+                        end
+                    end
+                }
+            )
+            menu_section:Button({name = "Unload", confirmation = true, callback = function()
+                window:Unload()
+                end})
+        end
+
+
+
+
+        local other_section = settings_page:Section({name = "Other", side = "Right"}) do
+            other_section:Button(
+                {name = "Copy JobId", callback = function()
+                    setclipboard(game.JobId)
+                end})
+                other_section:Button(
+                    {name = "Copy GameID", callback = function()
+                        setclipboard(game.GameId)
+                    end})
+                    other_section:Button(
+                        {name = "Copy Game Invite", callback = function()
+                            setclipboard('Roblox.GameLauncher.joinGameInstance('..game.PlaceId..',"'..game.JobId..'")')
+                        end})
+            other_section:Button(
+                {name = "Rejoin", confirmation = true, callback = function()
+                    m_game:teleport(game.PlaceId, game.JobId)
+                end})
+
+            other_section:Button(
+                {name = "test", confirmation = true, callback = function()
+                    Window.notificationlist:AddNotification({text = "no.regrets loaded. have fun"})
+                end})
+            end
+
+
+    local themes_section = settings_page:Section({name = "Themes", side = "Right"}) do
+        themes_section:Colorpicker(
+            {pointer = "themes/menu/accent", name = "Accent", default = Color3.fromRGB(100,61,200), callback = function(p_state)
+                library:UpdateColor("Accent", p_state)
+            end})
+            themes_section:Colorpicker(
+            {pointer = "settings/menu/accent", name = "Light Contrast", default = Color3.fromRGB(30, 30, 30), callback = function(p_state)
+                library:UpdateColor("lightcontrast", p_state)
+            end})   
+            themes_section:Colorpicker(
+            {pointer = "settings/menu/accent", name = "Dark Constrast", default = Color3.fromRGB(25, 25, 25), callback = function(p_state)
+                library:UpdateColor("darkcontrast", p_state)
+            end})
+            themes_section:Colorpicker(
+            {pointer = "settings/menu/accent", name = "Outline", default = Color3.fromRGB(0, 0, 0), callback = function(p_state)
+                library:UpdateColor("outline", p_state)
+            end})
+            themes_section:Colorpicker(
+            {pointer = "settings/menu/accent", name = "Inline", default = Color3.fromRGB(50, 50, 50), callback = function(p_state)
+                library:UpdateColor("inline", p_state)
+            end})   
+            themes_section:Colorpicker(
+            {pointer = "settings/menu/accent", name = "Text Color", default = Color3.fromRGB(255, 255, 255), callback = function(p_state)
+                library:UpdateColor("textcolor", p_state)
+            end})
+            themes_section:Colorpicker(
+            {pointer = "settings/menu/accent", name = "Text Border", default = Color3.fromRGB(0, 0, 0), callback = function(p_state)
+                library:UpdateColor("textborder", p_state)
+            end})
+            themes_section:Colorpicker(
+            {pointer = "settings/menu/accent", name = "Cursor Outline", default = Color3.fromRGB(10, 10, 10), callback = function(p_state)
+                library:UpdateColor("cursoroutline", p_state)
+            end})   
+    end
+
+end
+    window.uibind = Enum.KeyCode.Insert
+    window:Initialize()
+end
