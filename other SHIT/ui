@@ -224,8 +224,6 @@ do
 				BackgroundTransparency = 1,
 				Position = UDim2.new(0.25, 0, 0.052435593, 0),
 				Size = UDim2.new(0, 511, 0, 428),
-				Image = "rbxassetid://4641149554",
-				ImageColor3 = themes.Background,
 				ScaleType = Enum.ScaleType.Slice,
 				SliceCenter = Rect.new(4, 4, 296, 296)
 			}, {
@@ -235,8 +233,6 @@ do
 					Position = UDim2.new(0, -15, 0, -15),
 					Size = UDim2.new(1, 30, 1, 30),
 					ZIndex = 0,
-					Image = "rbxassetid://5028857084",
-					ImageColor3 = themes.Glow,
 					ScaleType = Enum.ScaleType.Slice,
 					SliceCenter = Rect.new(24, 24, 276, 276)
 				}),
@@ -247,8 +243,6 @@ do
 					Position = UDim2.new(0, 0, 0, 38),
 					Size = UDim2.new(0, 126, 1, -38),
 					ZIndex = 3,
-					Image = "rbxassetid://5012534273",
-					ImageColor3 = themes.DarkContrast,
 					ScaleType = Enum.ScaleType.Slice,
 					SliceCenter = Rect.new(4, 4, 296, 296)
 				}, {
@@ -273,8 +267,6 @@ do
 					ClipsDescendants = true,
 					Size = UDim2.new(1, 0, 0, 38),
 					ZIndex = 5,
-					Image = "rbxassetid://4595286933",
-					ImageColor3 = themes.Accent,
 					ScaleType = Enum.ScaleType.Slice,
 					SliceCenter = Rect.new(4, 4, 296, 296)
 				}, {
@@ -339,8 +331,6 @@ do
 				Position = UDim2.new(0, 12, 0.5, 0),
 				Size = UDim2.new(0, 16, 0, 16),
 				ZIndex = 3,
-				Image = "rbxassetid://" .. tostring(icon),
-				ImageColor3 = themes.TextColor,
 				ImageTransparency = 0.64,
 				ScaleType = Enum.ScaleType.Fit
 			}) or {}
@@ -380,8 +370,6 @@ do
 			BackgroundTransparency = 1,
 			Size = UDim2.new(1, -10, 0, 28),
 			ZIndex = 2,
-			Image = "rbxassetid://5028857472",
-			ImageColor3 = themes.LightContrast,
 			ScaleType = Enum.ScaleType.Slice,
 			SliceCenter = Rect.new(4, 4, 296, 296),
 			ClipsDescendants = true
@@ -516,8 +504,6 @@ do
 			Parent = self.container,
 			BackgroundTransparency = 1,
 			Size = UDim2.new(0, 200, 0, 60),
-			Image = "rbxassetid://5028857472",
-			ImageColor3 = themes.Background,
 			ScaleType = Enum.ScaleType.Slice,
 			SliceCenter = Rect.new(4, 4, 296, 296),
 			ZIndex = 3,
@@ -527,8 +513,6 @@ do
 				Name = "Flash",
 				Size = UDim2.new(1, 0, 1, 0),
 				BackgroundTransparency = 1,
-				Image = "rbxassetid://4641149554",
-				ImageColor3 = themes.TextColor,
 				ZIndex = 5
 			}),
 			utility:Create("ImageLabel", {
@@ -537,8 +521,6 @@ do
 				Position = UDim2.new(0, -15, 0, -15),
 				Size = UDim2.new(1, 30, 1, 30),
 				ZIndex = 2,
-				Image = "rbxassetid://5028857084",
-				ImageColor3 = themes.Glow,
 				ScaleType = Enum.ScaleType.Slice,
 				SliceCenter = Rect.new(24, 24, 276, 276)
 			}),
@@ -569,8 +551,6 @@ do
 				BackgroundTransparency = 1,
 				Position = UDim2.new(1, -26, 0, 8),
 				Size = UDim2.new(0, 16, 0, 16),
-				Image = "rbxassetid://5012538259",
-				ImageColor3 = themes.TextColor,
 				ZIndex = 4
 			}),
 			utility:Create("ImageButton", {
