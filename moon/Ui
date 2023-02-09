@@ -1,0 +1,571 @@
+--[[ credit to daily#3014 
+join his discord servers
+
+https://discord.gg/vC7pejXMQ5
+
+https://discord.gg/bestantiexploit
+
+]]--
+
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local mouse = game:GetService("Players").LocalPlayer:GetMouse()
+
+local DropdownTween_Out = TweenInfo.new(0.15,Enum.EasingStyle.Sine,Enum.EasingDirection.Out)
+local DropdownTween_In = TweenInfo.new(0.15,Enum.EasingStyle.Sine,Enum.EasingDirection.In)
+local ArrowTween = TweenInfo.new(0.15,Enum.EasingStyle.Sine,Enum.EasingDirection.InOut)
+
+local Heartbeat = game:GetService("RunService").Heartbeat
+
+local Library = {uis = {}}
+Library.__index = Library
+
+
+function Library.CreateMain(name)
+	local ui = Instance.new("ScreenGui")
+	ui.Name = "moon_" .. name or tostring(math.random(1,100000))
+	table.insert(Library.uis,ui)
+
+	local hui = false
+
+	if syn and type(syn) == "table" and not is_sirhurt_closure and syn.protect_gui then
+		syn.protect_gui(ui)
+	elseif gethui and type(gethui) == "function" and gethui():IsA("Folder") then
+		hui = true
+	else
+		game:GetService("Players"):Kick("Your Exploit doesn't support gethui/syn.protect_gui!")
+		return
+	end
+
+
+	if not hui then
+		ui.Parent = game:GetService("CoreGui")
+	else
+		ui.Parent = gethui()
+	end
+
+	local t = {
+		ui = ui,
+		name = name,
+	}
+	setmetatable(t, Library)
+
+	return t
+end
+
+function Library:Destroy()
+	if not self then
+		error'wtf bro why would u do .Destroy instead of :Destroy???'
+		return
+	end
+
+	if not self.ui then
+		error'no ui'
+		return
+	end
+
+	for i,v in pairs(Library.uis) do
+		if v == self.ui then
+			table.remove(Library.uis,i)
+		end
+	end
+
+	self.ui:Destroy()
+	self.ui = nil
+end
+
+--lol
+
+function Library:CreateTab(name)
+	if not self then
+		error'wtf bro why would u do .CreateTab instead of :CreateTab???'
+		return
+	end
+
+	if not self.ui then
+		error'no ui'
+		return
+	end
+
+	local tab = Instance.new("Frame")
+	local line = Instance.new("Frame")
+	local label = Instance.new("TextLabel")
+	local textsize = Instance.new("UITextSizeConstraint")
+	local main = Instance.new("Frame")
+	local list = Instance.new("UIListLayout")
+
+
+
+	local count = #self.ui:GetChildren()
+	local position = ((count * 0.109))
+
+	tab.Name = "tab"
+	tab.Parent = self.ui
+	tab.BackgroundColor3 = Color3.fromRGB(42, 40, 42)
+	tab.BackgroundTransparency = 0
+	tab.BorderSizePixel = 0
+	tab.Position = UDim2.new(position, 4, 0.0145, 0)
+	tab.Size = UDim2.new(0.105, 0, 0, 33)
+
+	line.Name = "line"
+	line.Parent = tab
+	line.BackgroundColor3 = Color3.fromRGB(16, 255, 240)
+	line.BorderSizePixel = 0
+	line.Size = UDim2.new(1, 0, 0, 2)
+
+	label.Name = "label"
+	label.Parent = tab
+	label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	label.BackgroundTransparency = 1.000
+	label.BorderSizePixel = 0
+	label.Size = UDim2.new(1, 0, 1, 0)
+	label.Font = Enum.Font.Nunito
+	label.Text = name
+	label.TextColor3 = Color3.fromRGB(255, 255, 255)
+	label.TextScaled = true
+	label.TextSize = 14.000
+	label.TextWrapped = true
+
+	textsize.Parent = label
+	textsize.MaxTextSize = 23
+
+	main.Name = "main"
+	main.Parent = tab
+	main.AnchorPoint = Vector2.new(0.5, 0)
+	main.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	main.BackgroundTransparency = 1.000
+	main.BorderSizePixel = 0
+	main.Position = UDim2.new(0.5, 0, 1, 1)
+	main.Size = UDim2.new(0.975, 0, 0, 1)
+
+    main.ChildAdded:Connect(function()
+		local count = 0
+		for i,v in pairs(main:GetChildren()) do
+			if v:IsA("Frame") then
+				count += v.Size.Y.Offset
+			end
+		end
+		main.Size = UDim2.new(0.975,0,0,count)
+	end)
+
+	list.Parent = main
+    list.Name = "list"
+	list.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	list.SortOrder = Enum.SortOrder.LayoutOrder
+
+	local t = {
+		tab = tab,
+		name = name,
+		layoutorder = 0
+	}
+	setmetatable(t, Library)
+
+	return t
+end
+
+function Library:CreateToggle(text,yesdropdown,dropdownstuff,func)
+	if not self then
+		error'wtf bro why would u do .CreateToggle instead of :CreateToggle???'
+		return
+	end
+
+	if not self.tab then
+		error'no tab'
+		return
+	end
+
+	local rand = math.random(1,100000)
+
+	local toggles = {
+		toggle = false,
+		dropdown = false,
+	}
+
+	local toggle = Instance.new("Frame")
+	local label = Instance.new("TextButton")
+	local UITextSizeConstraint = Instance.new("UITextSizeConstraint")
+	local button = nil
+	local dropdown = nil
+    local list = nil
+
+	toggle.Name = "toggle_" .. text  .. tostring(rand)
+	toggle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	toggle.BackgroundTransparency = 0.400
+	toggle.BorderSizePixel = 0
+	toggle.Size = UDim2.new(1, 0, 0, 30)
+
+	toggle.MouseLeave:connect(function()
+		toggle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	end)
+
+	toggle.MouseEnter:connect(function()
+		toggle.BackgroundColor3 = Color3.fromRGB(20,20,20)
+	end)
+
+	label.Name = "label"
+	label.Parent = toggle
+	label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	label.BackgroundTransparency = 1.000
+	label.BorderSizePixel = 0
+	label.Size = UDim2.new(0.846259534, 0, 1, 0)
+	label.Font = Enum.Font.Nunito
+	label.Text = "  " .. text
+	label.TextColor3 = Color3.fromRGB(244, 244, 244)
+	label.TextScaled = true
+	label.TextSize = 14.000
+	label.TextWrapped = true
+	label.TextXAlignment = Enum.TextXAlignment.Left
+
+	UITextSizeConstraint.Parent = label
+	UITextSizeConstraint.MaxTextSize = 18
+
+    self.layoutorder += 1
+    toggle.LayoutOrder = self.layoutorder
+
+	if yesdropdown then
+		dropdown = Instance.new("Frame")
+		dropdown.Name = "dropdown_" .. text .. tostring(rand)
+		dropdown.AnchorPoint = Vector2.new(0.5, 0)
+		dropdown.BackgroundColor3 = Color3.fromRGB(23, 23, 23)
+		dropdown.BackgroundTransparency = 0.43
+		dropdown.BorderSizePixel = 0
+		dropdown.Position = UDim2.new(0.5, 0, 0, 0)
+		dropdown.Size = UDim2.new(0.97500002, 0, 0, 0)
+        self.layoutorder += 1
+        dropdown.LayoutOrder = self.layoutorder
+        dropdown.ClipsDescendants = true
+
+        list = Instance.new("UIListLayout")
+		list.Parent = dropdown
+		list.Name = "list"
+		list.HorizontalAlignment = Enum.HorizontalAlignment.Center
+		list.SortOrder = Enum.SortOrder.LayoutOrder
+
+		button = Instance.new("ImageButton")
+		button.Name = "button"
+		button.Parent = toggle
+		button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		button.BackgroundTransparency = 1.000
+		button.BorderSizePixel = 0
+		button.Position = UDim2.new(0.846, 0, 0, 0)
+		button.Size = UDim2.new(0.153, 0, 1, 0)
+		button.Image = "rbxassetid://6034818372"
+	else
+		label.Size = UDim2.new(1,0,1,0)
+	end
+
+	toggle.Parent = self.tab.main
+	if dropdown ~= nil then
+		dropdown.Parent = self.tab.main
+
+        local Size = 0
+
+        for i,v in pairs(dropdownstuff) do
+			if v.Type == "Toggle" then
+				local toggled = false
+				
+				local toggle = Instance.new("Frame")
+				local box = Instance.new("TextButton")
+				local label = Instance.new("TextLabel")
+				local UITextSizeConstraint = Instance.new("UITextSizeConstraint")
+
+				toggle.Name = "toggle"
+				toggle.Parent = dropdown
+				toggle.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+				toggle.BackgroundTransparency = 1
+				toggle.BorderSizePixel = 0
+				toggle.Size = UDim2.new(1, 0, 0, 24)
+
+                Size += 24
+
+				box.Name = "box"
+				box.Parent = toggle
+				box.AnchorPoint = Vector2.new(0, 0.5)
+				box.BackgroundColor3 = Color3.fromRGB(0,0,0)
+                box.BackgroundTransparency = 0.75
+				box.BorderSizePixel = 0
+				box.Position = UDim2.new(0.860000014, 0, 0.5, 0)
+				box.Size = UDim2.new(0.108, 0, 0.8, 0)
+				box.ZIndex = 2
+				box.Font = Enum.Font.SourceSans
+				box.Text = ""
+				box.TextColor3 = Color3.fromRGB(57, 197, 18)
+				box.TextScaled = true
+				box.TextSize = 14.000
+				box.TextWrapped = true
+
+				label.Name = "label"
+				label.Parent = toggle
+				label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				label.BackgroundTransparency = 1.000
+				label.BorderSizePixel = 0
+				label.Size = UDim2.new(0.846259534, 0, 1, 0)
+				label.Font = Enum.Font.Nunito
+                label.RichText = true
+				label.Text = "  " .. "<b>" .. v.Text .. "</b>"
+				label.TextColor3 = Color3.fromRGB(255, 255, 255)
+				label.TextScaled = true
+				label.TextSize = 14.000
+				label.TextWrapped = true
+				label.TextXAlignment = Enum.TextXAlignment.Left
+
+				UITextSizeConstraint.Parent = label
+				UITextSizeConstraint.MaxTextSize = 18
+				
+				box.MouseButton1Click:Connect(function()
+					toggled = not toggled
+					local text = (toggled and "✓" or "")
+					box.Text = text
+					v.Callback(toggled)
+				end)
+			elseif v.Type == "Slider" then
+
+
+				local slider = Instance.new("Frame")
+				local label = Instance.new("TextLabel")
+				local UITextSizeConstraint = Instance.new("UITextSizeConstraint")
+				local mainslider = Instance.new("Frame")
+				local UICorner = Instance.new("UICorner")
+				local progress = Instance.new("Frame")
+				local UICorner_2 = Instance.new("UICorner")
+
+				local size = 36
+
+				slider.Name = "slider"
+				slider.Parent = dropdown
+				slider.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+				slider.BackgroundTransparency = 1
+				slider.BorderSizePixel = 0
+				slider.Position = UDim2.new(0, 0, 0, 0)
+				slider.Size = UDim2.new(1, 0, 0, size)
+
+				Size += size
+
+				label.Name = "label"
+				label.Parent = slider
+				label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				label.BackgroundTransparency = 1.000
+				label.BorderSizePixel = 0
+				label.Position = UDim2.new(0, 0, 0.05, 0)
+				label.Size = UDim2.new(1, 0, 0.463, 0)
+				label.Font = Enum.Font.Nunito
+				label.RichText = true
+				label.Text = "  " .. "<b>" .. v.Text .. "</b>" .. ": " .. tostring((v.Default and v.Default or v.Min))
+				label.TextColor3 = Color3.fromRGB(255, 255, 255)
+				label.TextScaled = true
+				label.TextSize = 14.000
+				label.TextWrapped = true
+				label.TextXAlignment = Enum.TextXAlignment.Left
+
+				UITextSizeConstraint.Parent = label
+				UITextSizeConstraint.MaxTextSize = 21
+
+				mainslider.Name = "mainslider"
+				mainslider.Parent = slider
+				mainslider.AnchorPoint = Vector2.new(0.5, 0)
+				mainslider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				mainslider.Position = UDim2.new(0.50000006, 0, 0.650000095, 0)
+				mainslider.Size = UDim2.new(0.900000036, 0, 0.118750021, 0)
+
+				UICorner.Parent = mainslider
+
+				progress.Name = "progress"
+				progress.Parent = mainslider
+				progress.BackgroundColor3 = Color3.fromRGB(57, 197, 18)
+				progress.Size = UDim2.new(0.392041534, 0, 1, 0)
+
+				UICorner_2.Parent = progress
+
+				progress.Active = true;
+				mainslider.Active = true;
+
+				local IsInFrame = false
+
+				mainslider.MouseLeave:connect(function()
+					IsInFrame = false;
+				end)
+
+				mainslider.MouseEnter:connect(function()
+					IsInFrame = true;
+				end)
+
+				local function getpercentage()
+					local Size = mainslider.AbsoluteSize.X
+					local Size2 = progress.AbsoluteSize.X
+
+					local Percentage = math.clamp(Size2 / Size,0,1)
+					local Value = v.Min + Percentage * (v.Max - v.Min)
+
+					return math.floor(Value)
+				end
+
+				local function Update()
+					local Position = (UIS:GetMouseLocation().X-slider.AbsolutePosition.X)/slider.AbsoluteSize.X
+					Position = UDim2.new(math.clamp(Position,0,1),0,1,0)
+					progress:TweenSize(Position,"Out","Linear",.01)
+
+					local percentage = getpercentage()
+					v.Callback(percentage)
+					label.Text = "  " .. "<b>" .. v.Text .. "</b>" .. ": " .. tostring(percentage)
+				end
+				
+
+				mainslider.InputBegan:Connect(function(input)
+					if input.UserInputType == Enum.UserInputType.MouseButton1 and IsInFrame then
+						while Heartbeat:wait() and UIS:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
+							Update()
+						end
+					end
+				end)
+
+				local defaultpos = (v.Default - v.Min) / (v.Max - v.Min)
+				progress.Size = UDim2.new(defaultpos,0,1,0)
+
+				local percentage = getpercentage()
+				label.Text = "  " .. "<b>" .. v.Text .. "</b>" .. ": " .. tostring(percentage)
+			end
+		end
+
+
+		button.MouseButton1Click:Connect(function()
+			toggles.dropdown = not toggles.dropdown
+			local Animation = (toggles.dropdown and TweenService:Create(dropdown,DropdownTween_Out,{Size = UDim2.new(0.975, 0, 0, Size)}) or TweenService:Create(dropdown,DropdownTween_In,{Size = UDim2.new(0.975, 0, 0, 0)}))
+			local Animation2 = (toggles.dropdown and TweenService:Create(button,ArrowTween,{Rotation = -90}) or TweenService:Create(button,ArrowTween,{Rotation = 0}))
+            Animation:Play()
+            Animation2:Play()
+		end)
+	end
+
+
+
+	label.MouseButton1Click:Connect(function()
+		toggles.toggle = not toggles.toggle
+		local color = (toggles.toggle and Color3.fromRGB(57, 197, 18) or Color3.fromRGB(255,255,255))
+		local color2 = (toggles.toggle and Color3.fromRGB(10,10,10) or Color3.fromRGB(40,40,40))
+		toggle.BackgroundColor3 = color2
+		label.TextColor3 = color
+		func(toggles.toggle)
+	end)
+
+    local t = {__removeable = true,tab = self.tab,obj = {toggle,dropdown}}
+    setmetatable(t,Library)
+    return t
+end
+
+function Library:CreateButton(text,func)
+	if not self then
+		error'wtf bro why would u do .CreateButton instead of :CreateButton???'
+		return
+	end
+
+	if not self.tab then
+		error'no tab'
+		return
+	end
+
+	local rand = math.random(1,100000)
+
+	local toggle = Instance.new("Frame")
+	local label = Instance.new("TextButton")
+	local UITextSizeConstraint = Instance.new("UITextSizeConstraint")
+
+	toggle.Name = "button_" .. text  .. tostring(rand)
+	toggle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	toggle.BackgroundTransparency = 0.400
+	toggle.BorderSizePixel = 0
+	toggle.Size = UDim2.new(1, 0, 0, 30)
+
+	toggle.MouseLeave:connect(function()
+		toggle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	end)
+
+	toggle.MouseEnter:connect(function()
+		toggle.BackgroundColor3 = Color3.fromRGB(20,20,20)
+	end)
+
+	label.Name = "label"
+	label.Parent = toggle
+	label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	label.BackgroundTransparency = 1.000
+	label.BorderSizePixel = 0
+	label.Size = UDim2.new(1, 0, 1, 0)
+	label.Font = Enum.Font.Nunito
+	label.Text = "  " .. text
+	label.TextColor3 = Color3.fromRGB(244, 244, 244)
+	label.TextScaled = true
+	label.TextSize = 14.000
+	label.TextWrapped = true
+	label.TextXAlignment = Enum.TextXAlignment.Left
+
+	UITextSizeConstraint.Parent = label
+	UITextSizeConstraint.MaxTextSize = 18
+
+    self.layoutorder += 1
+    toggle.LayoutOrder = self.layoutorder
+
+    toggle.Parent = self.tab.main
+
+	label.MouseButton1Click:Connect(function()
+		task.spawn(function()
+            local color = Color3.fromRGB(57, 197, 18)
+            local color2 = Color3.fromRGB(255,255,255)
+            label.TextColor3 = color
+            task.wait(0.1)
+            label.TextColor3 = color2
+        end)
+		func()
+	end)
+
+    local t = {__removeable = true,tab = self.tab,obj = {toggle}}
+    setmetatable(t,Library)
+    return t
+end
+
+function Library:Remove()
+    if not self then
+		error'wtf bro why would u do .Remove instead of :Remove???'
+		return
+	end
+
+    if not self.__removeable then
+		error'not removeable'
+		return
+	end
+
+	if not self.obj then
+		error'no object'
+		return
+	end
+
+    for i,v in pairs(self.obj) do
+        if v then
+            v:Destroy()
+        end
+    end
+end
+
+UIS.InputBegan:Connect(function(input,gameprocessedevent)
+	if not gameprocessedevent then
+		if input.KeyCode == Enum.KeyCode.RightAlt then
+			for i,v in pairs(Library.uis) do
+				v.Enabled = not v.Enabled
+			end
+		end
+	end
+end)
+
+local time = 5
+
+Heartbeat:Connect(function()
+	for i,v in pairs(Library.uis) do
+		if v.Enabled then
+			for i2,v2 in pairs(v:GetChildren()) do
+				if v2:IsA("Frame") then
+					v2.line.BackgroundColor3 = Color3.fromHSV(tick() % time / time,1,1)
+				end
+			end
+		end
+	end
+end)
+
+getgenv().Library = Library
