@@ -1,4 +1,4 @@
-local Library = -- Library here such as loadfile("libary.lua")() or loadstring(game:HttpGet("https://raw.githubusercontent.com/matas3535/PoopLibrary/main/Library.lua")()
+local Library = -- Library here such as loadfile("libary.lua")() or loadstring(game:HttpGet("https://github.com/ruini1/Ui/raw/main/splixprivate/SplixPrivate.lua")()
 -- // Creating Window
 
 </Function> Library:New(
